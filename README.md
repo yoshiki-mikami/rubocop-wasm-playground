@@ -1,4 +1,5 @@
 # rubocop-wasm-playground
+
 rubocopをブラウザ上で動かしてみる実験
 
 ## wasmのビルド
@@ -13,13 +14,21 @@ rubocopをブラウザ上で動かしてみる実験
 - RuboCopはpure Rubyなので、CDNのwasmをベースに gem ファイルを追加するだけで動く
 
 ```bash
-cd wasm-build
-bundle install --path vendor/bundle
-curl -L https://cdn.jsdelivr.net/npm/@ruby/3.4-wasm-wasi@2.9.4-2026-05-19-a/dist/ruby+stdlib.wasm -o base.wasm
-rbwasm pack base.wasm --dir vendor/bundle/ruby/3.3.0/gems::/bundle -o ../src/wasm/rubocop-ruby.wasm
+./build.sh
 ```
 
-> ※ `vendor/bundle/ruby/3.3.0/gems` のパスはローカルの Ruby バージョンによって異なる場合があります。
+初回ビルドは wasi-vfs ツールチェーンと CRuby のダウンロード・コンパイルが走るため数分かかる。
+
+<details>
+<summary>build.sh が行う処理</summary>
+
+1. `wasm-build/` で `bundle install`
+2. `bundle exec rbwasm build` で wasi-vfs ツールチェーンをダウンロード
+3. CDN から `ruby+stdlib.wasm` を取得
+4. `bundle exec rbwasm pack` で RuboCop gem を wasm に同梱し `src/wasm/rubocop-ruby.wasm` を生成
+5. 中間ファイル `base.wasm` を削除
+
+</details>
 
 ## サーバー起動方法
 

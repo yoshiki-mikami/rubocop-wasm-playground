@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clean *)",
+      "Bash(bundle config *)",
+      "Bash(bundle install *)",
+      "Bash(/bin/zsh *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
+      "Bash(chmod +x *)",
+      "Bash(git *)"
+    ]
+  }
+}
