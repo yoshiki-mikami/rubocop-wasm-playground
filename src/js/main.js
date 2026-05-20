@@ -2,45 +2,44 @@ import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.9.
 
 const output = document.getElementById('output');
 const btn = document.getElementById('run-btn');
-
-async function setupRuby(vm) {
-  const evalFile = async (path) => {
-    const res = await fetch(path);
-    vm.eval(await res.text());
-  };
-
-  await evalFile('/ruby/rubocop/setup.rb');
-}
+const loadingOverlay = document.getElementById('loading-overlay');
 
 async function initVM() {
   const response = await fetch('/wasm/rubocop-ruby.wasm');
   const module = await WebAssembly.compileStreaming(response);
   const { vm } = await DefaultRubyVM(module);
 
-  await setupRuby(vm);
+  const setupRuby = await fetch('/ruby/rubocop/setup.rb');
+  vm.eval(await setupRuby.text());
 
   return vm;
 }
 
-async function onClick(vm) {
+async function execRubocop(vm) {
+  const renderOffenses = (offenses) => {
+    const hasOffense = offenses.length > 0;
+    output.className = hasOffense ? 'offense' : 'success';
+    output.textContent = hasOffense
+      ? offenses.map(o => `${o.line}行目: ${o.message}`).join('\n')
+      : 'no offenses detected';
+  };
+
   const code = document.getElementById('code').value;
   globalThis.rubyCode = code;
 
   try {
     const res = await fetch('/ruby/rubocop/runner.rb');
-    const result = vm.eval(await res.text());
-    output.textContent = result.toString() || 'offenseなし';
+    const offenses = JSON.parse(vm.eval(await res.text()).toString());
+    renderOffenses(offenses);
   } catch (e) {
+    output.className = '';
     output.textContent = 'エラー: ' + e.message;
     console.error(e);
   }
 }
 
-btn.disabled = true;
-output.textContent = 'ruby.wasm を読み込み中...';
-
 const vm = await initVM();
 
-btn.disabled = false;
-btn.addEventListener('click', () => onClick(vm));
+loadingOverlay.classList.add('hidden');
+btn.addEventListener('click', () => execRubocop(vm));
 

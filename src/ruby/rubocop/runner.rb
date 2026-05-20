@@ -19,7 +19,7 @@ runner.run(['/tmp/main.rb'])
 
 result = JSON.parse(File.read(output_path))
 offenses = result['files'][0]['offenses'].map do |o|
-  "#{o['location']['start_line']}行目: #{o['message']}"
+  { line: o['location']['start_line'], message: o['message'] }
 end
 
-offenses.join("\n")
+offenses.to_json

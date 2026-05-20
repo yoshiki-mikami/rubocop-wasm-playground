@@ -16,6 +16,14 @@ puts x+y</textarea>
   <button id="run-btn">RuboCop を実行</button>
   <div id="output"></div>
 
+  <div id="loading-overlay">
+    <div id="loading-box">
+      <div id="loading-spinner"></div>
+      <p>RuboCop を読み込み中...</p>
+      <p id="loading-sub">初回は少し時間がかかります</p>
+    </div>
+  </div>
+
   <script type="module" src="./js/main.js"></script>
 </body>
 </html>
