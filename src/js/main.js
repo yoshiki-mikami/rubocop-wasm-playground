@@ -9,7 +9,7 @@ async function setupRuby(vm) {
     vm.eval(await res.text());
   };
 
-  await evalFile('/ruby/rubocop_setup.rb');
+  await evalFile('/ruby/rubocop/setup.rb');
 }
 
 async function initVM() {
@@ -22,10 +22,14 @@ async function initVM() {
   return vm;
 }
 
-function onClick(vm) {
+async function onClick(vm) {
+  const code = document.getElementById('code').value;
+  globalThis.rubyCode = code;
+
   try {
-    const result = vm.eval(`"Hello from Ruby #{RUBY_VERSION}!"`);
-    output.textContent = result.toString();
+    const res = await fetch('/ruby/rubocop/runner.rb');
+    const result = vm.eval(await res.text());
+    output.textContent = result.toString() || 'offenseなし';
   } catch (e) {
     output.textContent = 'エラー: ' + e.message;
     console.error(e);
@@ -39,3 +43,4 @@ const vm = await initVM();
 
 btn.disabled = false;
 btn.addEventListener('click', () => onClick(vm));
+
