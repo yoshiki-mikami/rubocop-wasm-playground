@@ -2,5 +2,6 @@ wasm-build/build/
 wasm-build/rubies/
 wasm-build/vendor/
 wasm-build/*.wasm
-src/wasm/
+src/wasm/*.wasm
 vendor/
+.keep
