@@ -1,0 +1,2 @@
+# rubocop-ruby.wasm が 100MB を超えるため Git LFS で管理する
+*.wasm filter=lfs diff=lfs merge=lfs -text
